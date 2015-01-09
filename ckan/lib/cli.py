@@ -185,6 +185,7 @@ class ManageDb(CkanCommand):
     db dump-rdf DATASET_NAME FILE_PATH
     db simple-dump-csv FILE_PATH   - dump just datasets in CSV format
     db simple-dump-json FILE_PATH  - dump just datasets in JSON format
+    db happy-dump FILE_PATH        - dump things that make people happy
     db user-dump-csv FILE_PATH     - dump user information to a CSV file
     db send-rdf TALIS_STORE USERNAME PASSWORD
     db load FILE_PATH              - load a pg_dump from a file
@@ -241,6 +242,8 @@ class ManageDb(CkanCommand):
             self.simple_dump_csv()
         elif cmd == 'simple-dump-json':
             self.simple_dump_json()
+        elif cmd == 'happy-dump':
+            self.happy_dump()
         elif cmd == 'dump-rdf':
             self.dump_rdf()
         elif cmd == 'user-dump-csv':
@@ -347,6 +350,16 @@ class ManageDb(CkanCommand):
         import ckan.lib.dumper as dumper
         dump_file = open(dump_filepath, 'w')
         dumper.SimpleDumper().dump(dump_file, format='json')
+
+    def happy_dump(self):
+        import ckan.model as model
+        if len(self.args) < 2:
+            print 'Need json file path'
+            return
+        dump_filepath = self.args[1]
+        import ckan.lib.happy_dumper as dumper
+        dump_file = open(dump_filepath, 'w')
+        dumper.HappyDumper().dump(dump_file)
 
     def dump_rdf(self):
         if len(self.args) < 3:
